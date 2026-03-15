@@ -3,7 +3,7 @@ import { useLibrary } from '@/contexts/LibraryContext';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const statusVariant = (s: string) => {
+function statusVariant(s: string): "pending" | "approved" | "issued" | "returned" | "destructive" | "secondary" {
   switch (s) {
     case 'pending': return 'pending';
     case 'approved': return 'approved';
@@ -12,7 +12,7 @@ const statusVariant = (s: string) => {
     case 'rejected': return 'destructive';
     default: return 'secondary';
   }
-} as const;
+}
 
 export default function MyRequests() {
   const { user } = useAuth();
