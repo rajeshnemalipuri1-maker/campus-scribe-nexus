@@ -211,7 +211,7 @@ export default function LoginPage() {
 
                 {selectedRole === "student" && (
                   <p>
-                    ID: y23cd158 | Password: student123
+                    ID: y23cd001 | Password: student123
                   </p>
                 )}
 
