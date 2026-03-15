@@ -30,12 +30,15 @@ export default function LoginPage() {
 
     if (!selectedRole) return;
 
-    if (!userId || !password) {
+    const id = userId.trim().toLowerCase();
+    const pass = password.trim();
+
+    if (!id || !pass) {
       setError("Please enter User ID and Password");
       return;
     }
 
-    const success = login(selectedRole, userId, password);
+    const success = login(selectedRole, id, pass);
 
     if (success) {
       navigate(`/${selectedRole}/dashboard`);
@@ -54,67 +57,76 @@ export default function LoginPage() {
       role: "student",
       label: "Student Login",
       icon: <GraduationCap className="h-8 w-8" />,
-      description: "Access your library account",
+      description: "Access library account",
     },
     {
       role: "librarian",
       label: "Librarian Login",
       icon: <Users className="h-8 w-8" />,
-      description: "Manage book circulation",
+      description: "Manage circulation",
     },
     {
       role: "admin",
       label: "Admin Login",
       icon: <Shield className="h-8 w-8" />,
-      description: "Full system control",
+      description: "System administration",
     },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-4xl">
 
         {/* Header */}
+
         <div className="text-center mb-10">
-          <div className="flex items-center justify-center gap-3 mb-4">
+
+          <div className="flex justify-center mb-4">
+
             <div className="h-14 w-14 rounded-lg bg-primary flex items-center justify-center">
-              <BookOpen className="h-8 w-8 text-primary-foreground" />
+              <BookOpen className="h-8 w-8 text-white" />
             </div>
+
           </div>
 
-          <h1 className="text-3xl font-semibold">University Library</h1>
+          <h1 className="text-3xl font-semibold">
+            University Library
+          </h1>
+
           <p className="text-muted-foreground mt-2">
             Library Management System
           </p>
+
         </div>
 
-        {/* ROLE SELECTION */}
-
         {!selectedRole ? (
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
 
-            {roles.map(({ role, label, icon, description }) => (
+            {roles.map((r) => (
 
               <Card
-                key={role}
+                key={r.role}
                 className="cursor-pointer border-2 hover:border-primary"
-                onClick={() => setSelectedRole(role)}
+                onClick={() => setSelectedRole(r.role)}
               >
 
                 <CardHeader className="text-center">
 
                   <div className="mx-auto mb-3 h-14 w-14 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                    {icon}
+                    {r.icon}
                   </div>
 
-                  <CardTitle>{label}</CardTitle>
+                  <CardTitle>{r.label}</CardTitle>
 
                 </CardHeader>
 
                 <CardContent>
+
                   <CardDescription className="text-center">
-                    {description}
+                    {r.description}
                   </CardDescription>
+
                 </CardContent>
 
               </Card>
@@ -125,8 +137,6 @@ export default function LoginPage() {
 
         ) : (
 
-          /* LOGIN CARD */
-
           <Card className="max-w-md mx-auto">
 
             <CardHeader>
@@ -136,7 +146,7 @@ export default function LoginPage() {
               </CardTitle>
 
               <CardDescription>
-                Enter credentials to continue
+                Enter your credentials
               </CardDescription>
 
             </CardHeader>
@@ -146,62 +156,74 @@ export default function LoginPage() {
               {/* USER ID */}
 
               <div>
-                <label className="text-sm font-medium">User ID</label>
+
+                <label className="text-sm font-medium">
+                  User ID
+                </label>
 
                 <Input
-                  placeholder="Enter ID"
+                  placeholder="Enter user id"
                   value={userId}
                   onChange={(e) => {
                     setUserId(e.target.value);
                     setError("");
                   }}
                 />
+
               </div>
 
               {/* PASSWORD */}
 
               <div>
-                <label className="text-sm font-medium">Password</label>
+
+                <label className="text-sm font-medium">
+                  Password
+                </label>
 
                 <Input
                   type="password"
                   placeholder="Enter password"
                   value={password}
                   onChange={(e) => {
-                    setPassword(e.target.value);
+                    setPassword(e.target.value.trimStart());
                     setError("");
                   }}
+                  onKeyDown={(e) => {
+                    if (e.key === " ") e.preventDefault();
+                  }}
                 />
+
               </div>
 
-              {/* ERROR MESSAGE */}
-
               {error && (
-                <p className="text-sm text-red-500">{error}</p>
+                <p className="text-red-500 text-sm">
+                  {error}
+                </p>
               )}
 
-              {/* DEMO LOGIN INFO */}
+              {/* DEMO LOGIN */}
 
               <div className="text-xs text-muted-foreground bg-muted/40 p-3 rounded">
 
+                <p className="font-semibold mb-1">
+                  Demo Credentials
+                </p>
+
                 {selectedRole === "student" && (
                   <p>
-                    Demo Login → ID: <span className="font-mono">y23cs001</span> |
-                    Password: <span className="font-mono">student123</span>
+                    ID: y23cd158 | Password: student123
                   </p>
                 )}
 
                 {selectedRole === "librarian" && (
                   <p>
-                    Demo Login → ID: <span className="font-mono">librarian01</span> |
-                    Password: <span className="font-mono">lib123</span>
+                    ID: librarian01 | Password: lib123
                   </p>
                 )}
 
                 {selectedRole === "admin" && (
                   <p>
-                    Demo Login → ID: <span className="font-mono">admin01</span> |
-                    Password: <span className="font-mono">admin123</span>
+                    ID: admin01 | Password: admin123
                   </p>
                 )}
 
