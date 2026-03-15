@@ -4,6 +4,8 @@ import { getBooks } from "@/data/mockData";
 
 interface LibraryState {
   requests: BookRequest[];
+  message: string | null;
+  clearMessage: () => void;
   addRequest: (req: BookRequest) => void;
   updateRequestStatus: (
     requestId: string,
@@ -19,7 +21,7 @@ interface LibraryState {
 
 const LibraryContext = createContext<LibraryState | null>(null);
 
-/* ---------------- INITIAL REQUEST DATA ---------------- */
+/* -------- INITIAL DATA -------- */
 
 function generateInitialRequests(): BookRequest[] {
   const books = getBooks();
@@ -40,63 +42,57 @@ function generateInitialRequests(): BookRequest[] {
   ];
 }
 
-/* ---------------- PROVIDER ---------------- */
+/* -------- PROVIDER -------- */
 
 export function LibraryProvider({ children }: { children: React.ReactNode }) {
-  const [requests, setRequests] = useState<BookRequest[]>(
-    generateInitialRequests
-  );
+  const [requests, setRequests] = useState<BookRequest[]>(generateInitialRequests);
+  const [message, setMessage] = useState<string | null>(null);
 
-  /* ---------- ADD REQUEST ---------- */
+  const clearMessage = () => setMessage(null);
+
+  /* -------- ADD REQUEST -------- */
 
   const addRequest = useCallback((req: BookRequest) => {
-    setRequests((prev) => [req, ...prev]);
+    setRequests(prev => [req, ...prev]);
   }, []);
 
-  /* ---------- ISSUE / APPROVE BOOK ---------- */
+  /* -------- ISSUE BOOK -------- */
 
   const updateRequestStatus = useCallback(
     (requestId: string, status: RequestStatus, dueDate?: string) => {
-      setRequests((prev) =>
-        prev.map((r) => {
+
+      setRequests(prev =>
+        prev.map(r => {
+
           if (r.id !== requestId) return r;
 
-          /* ---- COUNT ISSUED BOOKS ---- */
-
           const issuedCount = prev.filter(
-            (req) => req.studentId === r.studentId && req.status === "issued"
+            req => req.studentId === r.studentId && req.status === "issued"
           ).length;
 
-          /* ---- BLOCK IF ALREADY 3 ---- */
-
           if ((status === "approved" || status === "issued") && issuedCount >= 3) {
-            alert(
+
+            setMessage(
               "Student cannot issue more than 3 books. Please return one book first."
             );
+
             return r;
           }
 
           const updated = { ...r, status };
 
           if (status === "approved" || status === "issued") {
+
             updated.approvedDate = new Date().toISOString().split("T")[0];
 
-            /* ---- 14 DAY RETURN PERIOD ---- */
+            const due = new Date();
+            due.setDate(due.getDate() + 14);
 
-            if (dueDate) {
-              updated.dueDate = dueDate;
-            } else {
-              const due = new Date();
-              due.setDate(due.getDate() + 14);
-              updated.dueDate = due.toISOString().split("T")[0];
-            }
-
+            updated.dueDate = due.toISOString().split("T")[0];
             updated.status = "issued";
 
-            /* ---- UPDATE BOOK STOCK ---- */
-
             const books = getBooks();
-            const book = books.find((b) => b.id === r.bookId);
+            const book = books.find(b => b.id === r.bookId);
 
             if (book && book.availableCopies > 0) {
               book.availableCopies--;
@@ -111,15 +107,17 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
-  /* ---------- RETURN BOOK ---------- */
+  /* -------- RETURN BOOK -------- */
 
   const returnBook = useCallback((requestId: string) => {
-    setRequests((prev) =>
-      prev.map((r) => {
+
+    setRequests(prev =>
+      prev.map(r => {
+
         if (r.id !== requestId) return r;
 
         const books = getBooks();
-        const book = books.find((b) => b.id === r.bookId);
+        const book = books.find(b => b.id === r.bookId);
 
         if (book) {
           book.availableCopies++;
@@ -133,13 +131,14 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
         };
       })
     );
+
   }, []);
 
-  /* ---------- HELPERS ---------- */
+  /* -------- HELPERS -------- */
 
   const getStudentRequests = useCallback(
     (studentId: string) => {
-      return requests.filter((r) => r.studentId === studentId);
+      return requests.filter(r => r.studentId === studentId);
     },
     [requests]
   );
@@ -147,26 +146,26 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
   const getStudentBorrowedBooks = useCallback(
     (studentId: string) => {
       return requests.filter(
-        (r) => r.studentId === studentId && r.status === "issued"
+        r => r.studentId === studentId && r.status === "issued"
       );
     },
     [requests]
   );
 
   const getPendingRequests = useCallback(() => {
-    return requests.filter((r) => r.status === "pending");
+    return requests.filter(r => r.status === "pending");
   }, [requests]);
 
   const getAllIssuedBooks = useCallback(() => {
-    return requests.filter((r) => r.status === "issued");
+    return requests.filter(r => r.status === "issued");
   }, [requests]);
-
-  /* ---------- PROVIDER ---------- */
 
   return (
     <LibraryContext.Provider
       value={{
         requests,
+        message,
+        clearMessage,
         addRequest,
         updateRequestStatus,
         returnBook,
@@ -181,7 +180,7 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* ---------------- HOOK ---------------- */
+/* -------- HOOK -------- */
 
 export function useLibrary() {
   const ctx = useContext(LibraryContext);
