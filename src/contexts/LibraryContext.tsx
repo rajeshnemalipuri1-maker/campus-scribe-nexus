@@ -21,7 +21,7 @@ interface LibraryState {
 
 const LibraryContext = createContext<LibraryState | null>(null);
 
-/* -------- INITIAL DATA -------- */
+/* ---------- INITIAL DATA ---------- */
 
 function generateInitialRequests(): BookRequest[] {
   const books = getBooks();
@@ -42,7 +42,7 @@ function generateInitialRequests(): BookRequest[] {
   ];
 }
 
-/* -------- PROVIDER -------- */
+/* ---------- PROVIDER ---------- */
 
 export function LibraryProvider({ children }: { children: React.ReactNode }) {
   const [requests, setRequests] = useState<BookRequest[]>(generateInitialRequests);
@@ -50,45 +50,40 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
 
   const clearMessage = () => setMessage(null);
 
-  /* -------- ADD REQUEST -------- */
+  /* ---------- STUDENT REQUEST BOOK ---------- */
 
   const addRequest = useCallback((req: BookRequest) => {
-    setRequests(prev => [req, ...prev]);
+    setRequests(prev => {
+      const studentRequests = prev.filter(
+        r => r.studentId === req.studentId && r.status !== "returned"
+      );
+
+      if (studentRequests.length >= 3) {
+        setMessage("You cannot request more than 3 books at a time.");
+        return prev;
+      }
+
+      return [req, ...prev];
+    });
   }, []);
 
-  /* -------- ISSUE BOOK -------- */
+  /* ---------- LIBRARIAN APPROVES / ISSUES ---------- */
 
   const updateRequestStatus = useCallback(
     (requestId: string, status: RequestStatus, dueDate?: string) => {
-
       setRequests(prev =>
         prev.map(r => {
-
           if (r.id !== requestId) return r;
-
-          const issuedCount = prev.filter(
-            req => req.studentId === r.studentId && req.status === "issued"
-          ).length;
-
-          if ((status === "approved" || status === "issued") && issuedCount >= 3) {
-
-            setMessage(
-              "Student cannot issue more than 3 books. Please return one book first."
-            );
-
-            return r;
-          }
 
           const updated = { ...r, status };
 
           if (status === "approved" || status === "issued") {
-
             updated.approvedDate = new Date().toISOString().split("T")[0];
 
             const due = new Date();
             due.setDate(due.getDate() + 14);
-
             updated.dueDate = due.toISOString().split("T")[0];
+
             updated.status = "issued";
 
             const books = getBooks();
@@ -107,13 +102,11 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
     []
   );
 
-  /* -------- RETURN BOOK -------- */
+  /* ---------- RETURN BOOK ---------- */
 
   const returnBook = useCallback((requestId: string) => {
-
     setRequests(prev =>
       prev.map(r => {
-
         if (r.id !== requestId) return r;
 
         const books = getBooks();
@@ -126,15 +119,14 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
 
         return {
           ...r,
-          status: "returned" as RequestStatus,
+          status: "returned",
           returnDate: new Date().toISOString().split("T")[0],
         };
       })
     );
-
   }, []);
 
-  /* -------- HELPERS -------- */
+  /* ---------- HELPERS ---------- */
 
   const getStudentRequests = useCallback(
     (studentId: string) => {
@@ -180,14 +172,10 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* -------- HOOK -------- */
+/* ---------- HOOK ---------- */
 
 export function useLibrary() {
   const ctx = useContext(LibraryContext);
-
-  if (!ctx) {
-    throw new Error("useLibrary must be used within LibraryProvider");
-  }
-
+  if (!ctx) throw new Error("useLibrary must be used within LibraryProvider");
   return ctx;
 }
