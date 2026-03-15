@@ -1,45 +1,46 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/types';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserRole } from "@/types";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 
-import { BookOpen, GraduationCap, Users, Shield } from 'lucide-react';
+import { BookOpen, GraduationCap, Users, Shield } from "lucide-react";
 
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
-  const [userId, setUserId] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = () => {
-    setError('');
+    setError("");
 
     if (!selectedRole) return;
 
     if (!userId || !password) {
-      setError('Please enter User ID and Password');
+      setError("Please enter User ID and Password");
       return;
     }
 
-    const success = login(selectedRole, userId.toLowerCase().trim(), password);
+    const success = login(selectedRole, userId, password);
 
     if (success) {
       navigate(`/${selectedRole}/dashboard`);
     } else {
-      setError('Invalid User ID or Password');
+      setError("Invalid credentials");
     }
   };
 
@@ -50,22 +51,22 @@ export default function LoginPage() {
     description: string;
   }[] = [
     {
-      role: 'student',
-      label: 'Student Login',
+      role: "student",
+      label: "Student Login",
       icon: <GraduationCap className="h-8 w-8" />,
-      description: 'Access your library account, search & request books',
+      description: "Access your library account",
     },
     {
-      role: 'librarian',
-      label: 'Librarian Login',
+      role: "librarian",
+      label: "Librarian Login",
       icon: <Users className="h-8 w-8" />,
-      description: 'Manage book circulation, approve requests',
+      description: "Manage book circulation",
     },
     {
-      role: 'admin',
-      label: 'Admin Login',
+      role: "admin",
+      label: "Admin Login",
       icon: <Shield className="h-8 w-8" />,
-      description: 'Full system control, manage users & catalog',
+      description: "Full system control",
     },
   ];
 
@@ -81,71 +82,62 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <h1 className="text-3xl font-display font-semibold text-foreground">
-            University Library
-          </h1>
-
-          <p className="text-muted-foreground mt-2 font-body">
+          <h1 className="text-3xl font-semibold">University Library</h1>
+          <p className="text-muted-foreground mt-2">
             Library Management System
           </p>
         </div>
 
         {/* ROLE SELECTION */}
+
         {!selectedRole ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+
             {roles.map(({ role, label, icon, description }) => (
+
               <Card
                 key={role}
-                className="cursor-pointer border-2 border-border hover:border-primary transition-colors duration-150"
+                className="cursor-pointer border-2 hover:border-primary"
                 onClick={() => setSelectedRole(role)}
               >
-                <CardHeader className="text-center pb-2">
+
+                <CardHeader className="text-center">
 
                   <div className="mx-auto mb-3 h-14 w-14 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                     {icon}
                   </div>
 
-                  <CardTitle className="text-lg font-display">
-                    {label}
-                  </CardTitle>
+                  <CardTitle>{label}</CardTitle>
 
                 </CardHeader>
 
                 <CardContent>
-                  <CardDescription className="text-center text-sm">
+                  <CardDescription className="text-center">
                     {description}
                   </CardDescription>
                 </CardContent>
 
               </Card>
+
             ))}
+
           </div>
 
         ) : (
 
           /* LOGIN CARD */
 
-          <Card className="max-w-md mx-auto border-2">
+          <Card className="max-w-md mx-auto">
 
             <CardHeader>
 
-              <div className="flex items-center gap-3">
+              <CardTitle>
+                {roles.find(r => r.role === selectedRole)?.label}
+              </CardTitle>
 
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                  {roles.find(r => r.role === selectedRole)?.icon}
-                </div>
-
-                <div>
-                  <CardTitle className="font-display">
-                    {roles.find(r => r.role === selectedRole)?.label}
-                  </CardTitle>
-
-                  <CardDescription>
-                    Enter your credentials to continue
-                  </CardDescription>
-                </div>
-
-              </div>
+              <CardDescription>
+                Enter credentials to continue
+              </CardDescription>
 
             </CardHeader>
 
@@ -154,28 +146,22 @@ export default function LoginPage() {
               {/* USER ID */}
 
               <div>
-                <label className="text-sm font-medium text-foreground mb-1.5 block">
-                  User ID
-                </label>
+                <label className="text-sm font-medium">User ID</label>
 
                 <Input
-                  placeholder="Enter User ID"
+                  placeholder="Enter ID"
                   value={userId}
                   onChange={(e) => {
                     setUserId(e.target.value);
-                    setError('');
+                    setError("");
                   }}
-                  onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-                  className="font-mono"
                 />
               </div>
 
               {/* PASSWORD */}
 
               <div>
-                <label className="text-sm font-medium text-foreground mb-1.5 block">
-                  Password
-                </label>
+                <label className="text-sm font-medium">Password</label>
 
                 <Input
                   type="password"
@@ -183,15 +169,43 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
-                    setError('');
+                    setError("");
                   }}
-                  onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
                 />
               </div>
 
+              {/* ERROR MESSAGE */}
+
               {error && (
-                <p className="text-sm text-destructive">{error}</p>
+                <p className="text-sm text-red-500">{error}</p>
               )}
+
+              {/* DEMO LOGIN INFO */}
+
+              <div className="text-xs text-muted-foreground bg-muted/40 p-3 rounded">
+
+                {selectedRole === "student" && (
+                  <p>
+                    Demo Login → ID: <span className="font-mono">y23cs001</span> |
+                    Password: <span className="font-mono">student123</span>
+                  </p>
+                )}
+
+                {selectedRole === "librarian" && (
+                  <p>
+                    Demo Login → ID: <span className="font-mono">librarian01</span> |
+                    Password: <span className="font-mono">lib123</span>
+                  </p>
+                )}
+
+                {selectedRole === "admin" && (
+                  <p>
+                    Demo Login → ID: <span className="font-mono">admin01</span> |
+                    Password: <span className="font-mono">admin123</span>
+                  </p>
+                )}
+
+              </div>
 
               {/* BUTTONS */}
 
@@ -201,9 +215,9 @@ export default function LoginPage() {
                   variant="outline"
                   onClick={() => {
                     setSelectedRole(null);
-                    setUserId('');
-                    setPassword('');
-                    setError('');
+                    setUserId("");
+                    setPassword("");
+                    setError("");
                   }}
                   className="flex-1"
                 >
@@ -212,7 +226,7 @@ export default function LoginPage() {
 
                 <Button
                   onClick={handleLogin}
-                  className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                  className="flex-1"
                 >
                   Sign In
                 </Button>
@@ -222,10 +236,11 @@ export default function LoginPage() {
             </CardContent>
 
           </Card>
+
         )}
 
         <p className="text-center text-xs text-muted-foreground mt-8">
-          University Library Management System · Academic Year 2024–25
+          University Library Management System · 2024–25
         </p>
 
       </div>
