@@ -16,41 +16,66 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = (role: UserRole, id?: string, password?: string): boolean => {
 
-    if (role === "student") {
-      if (!id || password !== "student123") return false;
+    /* normalize inputs for ALL roles */
 
-      const student = getStudentById(id);
-      if (student) {
+    const cleanId = id?.trim().toLowerCase();
+    const cleanPassword = password?.trim();
+
+    /* ---------- STUDENT LOGIN ---------- */
+
+    if (role === "student") {
+
+      if (!cleanId || !cleanPassword) return false;
+
+      const student = getStudentById(cleanId);
+
+      if (student && cleanPassword === "student123") {
         setUser(student);
         return true;
       }
+
       return false;
     }
 
+    /* ---------- LIBRARIAN LOGIN ---------- */
+
     if (role === "librarian") {
-      if (id === "librarian01" && password === "lib123") {
+
+      if (cleanId === "librarian01" && cleanPassword === "lib123") {
         setUser(defaultLibrarian);
         return true;
       }
+
       return false;
     }
 
+    /* ---------- ADMIN LOGIN ---------- */
+
     if (role === "admin") {
-      if (id === "admin01" && password === "admin123") {
+
+      if (cleanId === "admin01" && cleanPassword === "admin123") {
         setUser(defaultAdmin);
         return true;
       }
+
       return false;
     }
 
     return false;
   };
 
-  const logout = () => setUser(null);
+  const logout = () => {
+    setUser(null);
+  };
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, isAuthenticated: !!user }}
+      value={{
+        user,
+        login,
+        logout,
+        isAuthenticated: !!user,
+      }}
     >
       {children}
     </AuthContext.Provider>
@@ -58,7 +83,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useAuth() {
+
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
+
+  if (!ctx) {
+    throw new Error("useAuth must be used inside AuthProvider");
+  }
+
   return ctx;
 }
