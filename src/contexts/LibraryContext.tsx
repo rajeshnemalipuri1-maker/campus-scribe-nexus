@@ -71,8 +71,25 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
 
   const updateRequestStatus = useCallback(
     (requestId: string, status: RequestStatus, dueDate?: string) => {
-      setRequests(prev =>
-        prev.map(r => {
+      setRequests(prev => {
+        const target = prev.find(r => r.id === requestId);
+        if (!target) return prev;
+
+        // Enforce 3-book limit when issuing
+        if (status === "approved" || status === "issued") {
+          const studentIssuedCount = prev.filter(
+            r => r.studentId === target.studentId && r.status === "issued"
+          ).length;
+
+          if (studentIssuedCount >= 3) {
+            setMessage(
+              `Cannot issue: ${target.studentName} already has 3 books issued. A book must be returned first.`
+            );
+            return prev;
+          }
+        }
+
+        return prev.map(r => {
           if (r.id !== requestId) return r;
 
           const updated = { ...r, status };
@@ -96,8 +113,8 @@ export function LibraryProvider({ children }: { children: React.ReactNode }) {
           }
 
           return updated;
-        })
-      );
+        });
+      });
     },
     []
   );
