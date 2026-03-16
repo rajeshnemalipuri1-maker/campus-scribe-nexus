@@ -38,7 +38,16 @@ const titlePrefixes = [
 ];
 
 const coverColors = [
-  "#1E3A5F","#2D4A22","#6B2D2D","#4A3B6B","#2B4A6F","#5C3D1E"
+  "linear-gradient(135deg, #1a1a2e, #16213e)",
+  "linear-gradient(135deg, #0f3460, #533483)",
+  "linear-gradient(135deg, #2d4059, #ea5455)",
+  "linear-gradient(135deg, #1b262c, #0f4c75)",
+  "linear-gradient(135deg, #3a0ca3, #7209b7)",
+  "linear-gradient(135deg, #184e77, #1a759f)",
+  "linear-gradient(135deg, #6b2737, #c94c4c)",
+  "linear-gradient(135deg, #2b580c, #639a67)",
+  "linear-gradient(135deg, #4a1942, #c74b50)",
+  "linear-gradient(135deg, #0d1b2a, #1b4332)",
 ];
 
 function seededRandom(seed:number){
