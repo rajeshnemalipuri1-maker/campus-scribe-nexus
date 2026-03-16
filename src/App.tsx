@@ -15,6 +15,7 @@ import StudentDashboard from "@/pages/student/StudentDashboard";
 import SearchBooks from "@/pages/student/SearchBooks";
 import MyRequests from "@/pages/student/MyRequests";
 import BorrowedBooks from "@/pages/student/BorrowedBooks";
+import FinesTransactions from "@/pages/student/FinesTransactions";
 import StudentCatalog from "@/pages/student/StudentCatalog";
 
 // Librarian pages
