@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLibrary } from '@/contexts/LibraryContext';
 import { getBooksPaginated, getCategories } from '@/data/mockData';
@@ -12,7 +12,15 @@ import { toast } from 'sonner';
 
 export default function SearchBooks() {
   const { user } = useAuth();
-  const { addRequest, getStudentRequests } = useLibrary();
+  const { addRequest, getStudentRequests, message, clearMessage } = useLibrary();
+
+  // Show library context messages (e.g. 3-book limit)
+  React.useEffect(() => {
+    if (message) {
+      toast.error(message);
+      clearMessage();
+    }
+  }, [message, clearMessage]);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
   const [availableOnly, setAvailableOnly] = useState(false);

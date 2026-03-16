@@ -1,3 +1,4 @@
+import React from 'react';
 import { useLibrary } from '@/contexts/LibraryContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -6,8 +7,16 @@ import { Check, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function PendingRequests() {
-  const { getPendingRequests, updateRequestStatus } = useLibrary();
+  const { getPendingRequests, updateRequestStatus, message, clearMessage } = useLibrary();
   const pending = getPendingRequests();
+
+  // Show library context messages (e.g. 3-book limit)
+  React.useEffect(() => {
+    if (message) {
+      toast.error(message);
+      clearMessage();
+    }
+  }, [message, clearMessage]);
 
   const handleApprove = (id: string, title: string) => {
     updateRequestStatus(id, 'issued');
