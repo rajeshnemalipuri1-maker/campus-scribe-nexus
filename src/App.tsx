@@ -15,6 +15,7 @@ import StudentDashboard from "@/pages/student/StudentDashboard";
 import SearchBooks from "@/pages/student/SearchBooks";
 import MyRequests from "@/pages/student/MyRequests";
 import BorrowedBooks from "@/pages/student/BorrowedBooks";
+import FinesTransactions from "@/pages/student/FinesTransactions";
 import StudentCatalog from "@/pages/student/StudentCatalog";
 
 // Librarian pages
@@ -57,6 +58,7 @@ const App = () => (
                 <Route path="/student/search" element={<SearchBooks />} />
                 <Route path="/student/requests" element={<MyRequests />} />
                 <Route path="/student/borrowed" element={<BorrowedBooks />} />
+                <Route path="/student/fines" element={<FinesTransactions />} />
                 <Route path="/student/catalog" element={<StudentCatalog />} />
                 <Route path="/student/profile" element={<ProfilePage />} />
               </Route>

@@ -5,6 +5,7 @@ import {
   BookOpen, LayoutDashboard, Search, FileText, BookMarked, Library, User,
   LogOut, ClipboardList, BookCheck, BookX, Users, UserSearch,
   PlusCircle, Edit, Trash2, BarChart3, Settings, ChevronLeft, ChevronRight,
+  IndianRupee,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -20,6 +21,7 @@ const studentNav: NavItem[] = [
   { label: 'Search Books', path: '/student/search', icon: <Search className="h-5 w-5" /> },
   { label: 'My Requests', path: '/student/requests', icon: <FileText className="h-5 w-5" /> },
   { label: 'Borrowed Books', path: '/student/borrowed', icon: <BookMarked className="h-5 w-5" /> },
+  { label: 'Fines & Transactions', path: '/student/fines', icon: <IndianRupee className="h-5 w-5" /> },
   { label: 'Library Catalog', path: '/student/catalog', icon: <Library className="h-5 w-5" /> },
   { label: 'Profile', path: '/student/profile', icon: <User className="h-5 w-5" /> },
 ];
