@@ -5,6 +5,7 @@ import {
   BookOpen, LayoutDashboard, Search, FileText, BookMarked, Library, User,
   LogOut, ClipboardList, BookCheck, BookX, Users, UserSearch,
   PlusCircle, Edit, Trash2, BarChart3, Settings, ChevronLeft, ChevronRight,
+  IndianRupee,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
