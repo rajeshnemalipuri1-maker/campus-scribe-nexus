@@ -269,15 +269,19 @@ export default function LoginPage() {
             <li>To request a new book when the limit is reached, one borrowed book must be returned first.</li>
             <li>Books are issued for a period of <strong>14 days</strong> from the date of approval.</li>
             <li>Students are responsible for the books in their possession and must return them in good condition.</li>
-            <li>Misuse of library resources may result in suspension of borrowing privileges.</li>
+            <li>Librarians must verify student identity before issuing or accepting returns.</li>
+            <li>Librarians may not issue more than <strong>3 books</strong> to any single student at a time.</li>
+            <li>Administrators are responsible for maintaining accurate catalog records and user accounts.</li>
+            <li>Misuse of library resources or system access may result in suspension of privileges.</li>
           </ul>
 
           <h2 className="text-sm font-semibold text-foreground mt-4">Return Policy</h2>
           <ul className="list-disc pl-5 space-y-1">
             <li>Books must be returned on or before the due date.</li>
-            <li>Overdue books may attract a fine of <strong>₹5 per day</strong> per book.</li>
+            <li>Overdue books attract a fine of <strong>₹5 per day</strong> per book.</li>
             <li>Lost or damaged books must be replaced or compensated at current market value.</li>
             <li>Returns are processed by the librarian and reflected in the student portal within 24 hours.</li>
+            <li>Librarians must log all return transactions in the system immediately upon receipt.</li>
           </ul>
         </div>
 
